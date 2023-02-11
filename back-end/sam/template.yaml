@@ -1,0 +1,78 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: SAM ACS Infra
+  
+Globals:
+  Function:
+    Timeout: 12
+    MemorySize: 256
+    Environment:
+      Variables:
+        STAGE: local
+        USERS_CORE_TABLE_NAME: !Ref UserCoreTable
+
+Resources:
+
+
+#
+# cognito
+#
+
+
+
+#
+# dynamoDB
+#
+
+  UserCoreTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      UpdateReplacePolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+       
+
+#
+#   lambdas functions
+#
+
+  updateACSdbFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      Architectures:
+        - x86_64
+      Events:
+        updateACSbd:
+          Type: Api
+          Properties:
+            Path: /updateACSdb
+            Method: any
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UserCoreTable
+
+    Metadata:
+      DockerTag: python3.8-v1
+      DockerContext: ../
+      Dockerfile: lambdas/updateACSdb/Dockerfile
+
+      
+
+Outputs:
+
+  updateACSdbApi:
+    Description: "API Gateway endpoint URL for Prod stage for updateACSdb function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/updateACSdb/"
+  updateACSdbFunction:
+    Description: "Lambda Function endpoint URL for Prod stage for updateACSdb"
+    Value: !GetAtt updateACSdbFunction.Arn
+  updateACSdbFunctionIamRole:
+    Description: "Implicit IAM Role created for updateACSdb function"
+    Value: !GetAtt updateACSdbFunctionRole.Arn

@@ -1,0 +1,4 @@
+{
+    "id" : "12345",
+    "properties" :  "json con el contenido del usuario"
+}
