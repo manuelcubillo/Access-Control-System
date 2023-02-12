@@ -13,7 +13,7 @@ def handler(event, context):
     print("Event: ", json.dumps(event)) 
     print("RUNNING ", os.environ.get('STAGE'), " STAGE")
     dynamodb = boto3.resource('dynamodb')
-    
+
     #cognitoClient = boto3.client('cognito-idp')
 
     # check request and get body
@@ -45,7 +45,9 @@ def handler(event, context):
 
         return getStatus200(dynamoResponse) # everythinh right, response with status code 200
 
-    except:
+    except Exception as err:
         print('Error updating db')
+        if 'response' in err:
+            print(err.response['Error']['Code'], err.response['Error']['Message'])
         print('msg sent', json.dumps(user))
         return SOMETHING_WENT_WRONG

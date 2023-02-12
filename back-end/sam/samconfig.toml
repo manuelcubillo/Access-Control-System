@@ -8,4 +8,5 @@ s3_prefix = "sam-acs-infra"
 region = "eu-west-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
-image_repositories = ["updateACSdbFunction=473090859996.dkr.ecr.eu-west-1.amazonaws.com/samacsinfra12a0f1cc/updateacsdbfunctiona7ae055frepo"]
+image_repositories = ["updateACSdbFunction=473090859996.dkr.ecr.eu-west-1.amazonaws.com/samacsinfra12a0f1cc/updateacsdbfunctiona7ae055frepo",
+                    "getACSUsersFunction=473090859996.dkr.ecr.eu-west-1.amazonaws.com/sam-acs-indra-get-acs-users"]

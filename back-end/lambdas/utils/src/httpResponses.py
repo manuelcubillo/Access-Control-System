@@ -4,6 +4,8 @@ http static responses
 import os
 import json
 
+ACS_NOT_FOUND = 'NOT_FOUND' # status returned when object is not found
+ACS_OK        = 'OK'        # status returned when everything is right
 
 SOMETHING_WENT_WRONG = {
                 'statusCode': 500,

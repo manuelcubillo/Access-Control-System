@@ -42,6 +42,7 @@ Resources:
 #   lambdas functions
 #
 
+# add or modify an user of the db
   updateACSdbFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -63,6 +64,28 @@ Resources:
       DockerContext: ../
       Dockerfile: lambdas/updateACSdb/Dockerfile
 
+# fetch data from user db: it can query by id or fetch all dat
+  getACSUsersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      Architectures:
+        - x86_64
+      Events:
+        updateACSbd:
+          Type: Api
+          Properties:
+            Path: /getACSUsers
+            Method: any
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UserCoreTable
+
+    Metadata:
+      DockerTag: python3.8-v1
+      DockerContext: ../
+      Dockerfile: lambdas/getACSUsers/Dockerfile
+
       
 
 Outputs:
@@ -70,9 +93,8 @@ Outputs:
   updateACSdbApi:
     Description: "API Gateway endpoint URL for Prod stage for updateACSdb function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/updateACSdb/"
-  updateACSdbFunction:
-    Description: "Lambda Function endpoint URL for Prod stage for updateACSdb"
-    Value: !GetAtt updateACSdbFunction.Arn
-  updateACSdbFunctionIamRole:
-    Description: "Implicit IAM Role created for updateACSdb function"
-    Value: !GetAtt updateACSdbFunctionRole.Arn
+
+  getACSUsersApi:
+    Description: "API Gateway endpoint URL for Prod stage for getACSUsersFunction function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/getACSUsersFunction/"
+
