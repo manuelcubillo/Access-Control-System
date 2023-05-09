@@ -4,67 +4,147 @@ Description: 'ACS Front-end
 
   '
 Resources:
-  CloudFrontOriginAccessIdentity:
+  LogsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      AccessControl: LogDeliveryWrite
+    Metadata:
+      SamResourceId: LogsBucket
+  LogsBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: LogsBucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Sid: AllowSSLRequestsOnly
+          Action: s3:*
+          Effect: Deny
+          Resource:
+          - Fn::Sub: arn:${AWS::Partition}:s3:::${LogsBucket}
+          - Fn::Sub: arn:${AWS::Partition}:s3:::${LogsBucket}/*
+          Condition:
+            Bool:
+              aws:SecureTransport: 'false'
+          Principal: '*'
+    Metadata:
+      SamResourceId: LogsBucketPolicy
+  WebAppBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: my-acs-webapp.es
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      WebsiteConfiguration:
+        IndexDocument: index.html
+    Metadata:
+      SamResourceId: WebAppBucket
+  WebAppBucketBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: WebAppBucket
+      PolicyDocument:
+        Statement:
+        - Action:
+          - s3:GetObject
+          Effect: Allow
+          Resource:
+            Fn::Sub: arn:aws:s3:::${WebAppBucket}/*
+          Principal:
+            CanonicalUser:
+              Fn::GetAtt:
+              - OriginAccessIdentity
+              - S3CanonicalUserId
+        - Sid: AllowSSLRequestsOnly
+          Action: s3:*
+          Effect: Deny
+          Resource:
+          - Fn::Sub: arn:${AWS::Partition}:s3:::${WebAppBucket}
+          - Fn::Sub: arn:${AWS::Partition}:s3:::${WebAppBucket}/*
+          Condition:
+            Bool:
+              aws:SecureTransport: 'false'
+          Principal: '*'
+    Metadata:
+      SamResourceId: WebAppBucketBucketPolicy
+  OriginAccessIdentity:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
       CloudFrontOriginAccessIdentityConfig:
-        Comment: Serverless website OA
+        Comment: Origin Access Identity Config
     Metadata:
-      SamResourceId: CloudFrontOriginAccessIdentity
-  CloudfrontDistribution:
+      SamResourceId: OriginAccessIdentity
+  ContentDelivery:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
-        Comment: Cloudfront distribution for serverless website
-        DefaultRootObject: index.html
-        Enabled: true
         HttpVersion: http2
-        Origins:
-        - Id: s3-website
-          DomainName:
-            Fn::GetAtt:
-            - S3Bucket
-            - DomainName
-          S3OriginConfig:
-            OriginAccessIdentity:
-              Fn::Sub: origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}
+        CustomErrorResponses:
+        - ErrorCode: 403
+          ResponsePagePath: /index.html
+          ResponseCode: 200
+          ErrorCachingMinTTL: 300
+        - ErrorCode: 404
+          ResponsePagePath: /index.html
+          ResponseCode: 200
+          ErrorCachingMinTTL: 300
         DefaultCacheBehavior:
-          Compress: 'true'
           AllowedMethods:
           - GET
           - HEAD
           - OPTIONS
+          CachedMethods:
+          - GET
+          - HEAD
+          - OPTIONS
+          Compress: true
           ForwardedValues:
-            QueryString: false
-          TargetOriginId: s3-website
+            QueryString: true
+          TargetOriginId: S3
+          SmoothStreaming: false
           ViewerProtocolPolicy: redirect-to-https
+        DefaultRootObject: index.html
+        Enabled: true
+        Logging:
+          IncludeCookies: false
+          Bucket:
+            Fn::Sub: ${LogsBucket}.s3.amazonaws.com
+          Prefix: delivery-logs
+        Origins:
+        - Id: S3
+          DomainName:
+            Fn::GetAtt:
+            - WebAppBucket
+            - RegionalDomainName
+          S3OriginConfig:
+            OriginAccessIdentity:
+              Fn::Sub: origin-access-identity/cloudfront/${OriginAccessIdentity}
+        PriceClass: PriceClass_100
     Metadata:
-      SamResourceId: CloudfrontDistribution
-  S3Bucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: my-acs.es
-    Metadata:
-      SamResourceId: S3Bucket
-  S3BucketPolicy:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket:
-        Ref: S3Bucket
-      PolicyDocument:
-        Statement:
-        - Effect: Allow
-          Action: s3:GetObject
-          Resource:
-          - Fn::Sub: arn:aws:s3:::${S3Bucket}/*
-          Principal:
-            AWS:
-              Fn::Sub: arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity
-                ${CloudFrontOriginAccessIdentity}
-    Metadata:
-      SamResourceId: S3BucketPolicy
+      SamResourceId: ContentDelivery
 Outputs:
-  S3Bucket:
-    Description: ACS Front Bucket
+  WebAppBucket:
+    Description: Front Bucket
     Value:
-      Ref: S3Bucket
+      Ref: WebAppBucket
+  CdnId:
+    Value:
+      Ref: ContentDelivery

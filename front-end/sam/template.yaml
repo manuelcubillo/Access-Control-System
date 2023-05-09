@@ -1,67 +1,147 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: >
   ACS Front-end
 
+
 Resources:
-  CloudFrontOriginAccessIdentity:
-    Type: 'AWS::CloudFront::CloudFrontOriginAccessIdentity'
+
+  # ===================================================================================================================================================
+  # S3 buckets
+  # ===================================================================================================================================================
+  LogsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      AccessControl: LogDeliveryWrite
+
+  LogsBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref LogsBucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: AllowSSLRequestsOnly
+            Action: s3:*
+            Effect: Deny
+            Resource:
+              - !Sub "arn:${AWS::Partition}:s3:::${LogsBucket}"
+              - !Sub "arn:${AWS::Partition}:s3:::${LogsBucket}/*"
+            Condition:
+              Bool:
+                aws:SecureTransport: "false"
+            Principal: "*"
+
+  WebAppBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+    # Change bucket name to reflect your website
+      BucketName: my-acs-webapp.es
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      WebsiteConfiguration:
+        IndexDocument: index.html
+
+  WebAppBucketBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref WebAppBucket
+      PolicyDocument:
+        Statement:
+          - Action:
+              - s3:GetObject
+            Effect: Allow
+            Resource: !Sub "arn:aws:s3:::${WebAppBucket}/*"
+            Principal:
+              CanonicalUser: !GetAtt OriginAccessIdentity.S3CanonicalUserId
+          - Sid: AllowSSLRequestsOnly
+            Action: s3:*
+            Effect: Deny
+            Resource:
+              - !Sub "arn:${AWS::Partition}:s3:::${WebAppBucket}"
+              - !Sub "arn:${AWS::Partition}:s3:::${WebAppBucket}/*"
+            Condition:
+              Bool:
+                aws:SecureTransport: "false"
+            Principal: "*"
+
+  # ===================================================================================================================================================
+  # CloudFront
+  # ===================================================================================================================================================
+  OriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
       CloudFrontOriginAccessIdentityConfig:
-        Comment: 'Serverless website OA'
+        Comment: "Origin Access Identity Config"
 
-  CloudfrontDistribution:
-    Type: "AWS::CloudFront::Distribution"
+  ContentDelivery:
+    Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
-        Comment: "Cloudfront distribution for serverless website"
-        DefaultRootObject: "index.html"
-        Enabled: true
+        # Aliases:
+        #   - !Ref WebDomainName
         HttpVersion: http2
-        # List of origins that Cloudfront will connect to
-        Origins:
-          - Id: s3-website
-            DomainName: !GetAtt S3Bucket.DomainName
-            S3OriginConfig:
-              # Restricting Bucket access through an origin access identity
-              OriginAccessIdentity: 
-                Fn::Sub: 'origin-access-identity/cloudfront/${CloudFrontOriginAccessIdentity}'
-        # To connect the CDN to the origins you need to specify behaviours
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponsePagePath: "/index.html"
+            ResponseCode: 200
+            ErrorCachingMinTTL: 300
+          - ErrorCode: 404
+            ResponsePagePath: "/index.html"
+            ResponseCode: 200
+            ErrorCachingMinTTL: 300
         DefaultCacheBehavior:
-          # Compress resources automatically ( gzip )
-          Compress: 'true'
           AllowedMethods:
             - GET
             - HEAD
             - OPTIONS
+          CachedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+          Compress: true
           ForwardedValues:
-            QueryString: false
-          TargetOriginId: s3-website
-          ViewerProtocolPolicy : redirect-to-https
-
-  S3Bucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      # Change bucket name to reflect your website
-      BucketName: my-acs.es
-
-  S3BucketPolicy:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket: !Ref S3Bucket
-      PolicyDocument:
-      # Restricting access to cloudfront only.
-        Statement:
-          -
-            Effect: Allow
-            Action: 's3:GetObject'
-            Resource:
-              - !Sub "arn:aws:s3:::${S3Bucket}/*"
-            Principal:
-              AWS: !Sub "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${CloudFrontOriginAccessIdentity}"
+            QueryString: true
+          TargetOriginId: S3
+          SmoothStreaming: false
+          ViewerProtocolPolicy: redirect-to-https
+        DefaultRootObject: "index.html"
+        Enabled: true
+        Logging:
+          IncludeCookies: false
+          Bucket: !Sub "${LogsBucket}.s3.amazonaws.com"
+          Prefix: delivery-logs
+        Origins:
+          - Id: S3
+            DomainName: !GetAtt WebAppBucket.RegionalDomainName
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${OriginAccessIdentity}"
+        PriceClass: PriceClass_100
+        # ViewerCertificate:
+        #   AcmCertificateArn: !Ref CertificateArn
+        #   MinimumProtocolVersion: "TLSv1.2_2018"
+        #   SslSupportMethod: sni-only
 
 
 Outputs:
-  S3Bucket:
-    Description: ACS Front Bucket
-    Value: !Ref S3Bucket
+  WebAppBucket:
+    Description: Front Bucket
+    Value: !Ref WebAppBucket
+  CdnId:
+    Value: !Ref ContentDelivery

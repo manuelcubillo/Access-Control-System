@@ -1,0 +1,33 @@
+<h1>User data</h1>
+
+<form nz-form >
+    <nz-form-item *ngFor="let field of headers; let i = index" [attr.data-index]="i">
+      <nz-form-label [nzSpan]="6" nzFor={{field}}>{{field}}</nz-form-label>
+      <nz-form-control [nzSpan]="14">
+        <input nz-input name={{field}} [(ngModel)]="userValues[i]" type={{field}} id={{field}} value={{userValues[i]}}>
+      </nz-form-control>
+    </nz-form-item >
+</form>
+
+<div class="row" *ngIf="userValues?.length == 0 ">
+    <p> User not found.</p>
+</div>
+
+
+<button nz-button nzType="primary" nzShape="round" (click)="goBack()"><span nz-icon nzType="left"></span>
+        Go back
+</button>
+
+<nz-divider nzType="vertical"></nz-divider>
+
+<button nz-button nzType="primary" nzShape="round" (click)="save()"><span nz-icon nzType="save"></span>
+        Save
+</button>
+
+<nz-divider nzType="vertical"></nz-divider>
+
+<button nz-button nzType="primary" nzShape="round" (click)="deleteAction()" nzDanger><span nz-icon nzType="delete"></span>
+        Delete
+</button>
+
+

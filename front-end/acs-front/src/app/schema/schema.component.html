@@ -1,0 +1,64 @@
+<h1>Schema definition</h1>
+
+<nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select a schema" [(ngModel)]="selectedSchema"
+    (ngModelChange)="showSchema()">
+
+    <nz-option *ngFor="let option of schemaList" [nzValue]="option" [nzLabel]="option.name"></nz-option>
+
+</nz-select>
+
+
+
+<nz-divider nzType="vertical"></nz-divider>
+
+<button nz-button nzSize="small" nzType="primary" nzShape="round" (click)="newSchema()">
+    <span nz-icon nzType="plus"></span>
+    New schema</button>
+
+<div #schemaProperties *ngIf="newSchemaOption">
+    <nz-divider nzPlain nzText=""></nz-divider>
+    <h2>Schema properties</h2>
+    <nz-input-group nzCompact>
+        <h3>Schema name: </h3>
+        <input type="text" nz-input placeholder="Schema name" style="width: 200px;" [(ngModel)]="selectedSchema.name" />
+        <br />
+        <br />
+    </nz-input-group>
+
+    <div *ngFor="let number of numbers">
+        <nz-input-group id="{{number}}" *ngIf="number < count" nzCompact>
+            <nz-space [nzSize]="'middle'">
+                <nz-select *nzSpaceItem nzPlaceHolder="Propertie type" [nzAllowClear]="false"
+                    [(ngModel)]="selectedSchema.properties[number.valueOf()][1]">
+                    <nz-option [nzLabel]="'Text'" [nzValue]="'Text'"></nz-option>
+                    <nz-option [nzLabel]="'Number'" [nzValue]="'Number'"></nz-option>
+                    <nz-option [nzLabel]="'Check'" [nzValue]="'Check'"></nz-option>
+                    <nz-option [nzLabel]="'Date'" [nzValue]="'Date'"></nz-option>
+                    <nz-option [nzLabel]="'Photo'" [nzValue]="'Photo'"></nz-option>
+                    <nz-option [nzLabel]="'QR'" [nzValue]="'QR'"></nz-option>
+                </nz-select>
+
+                <input *nzSpaceItem type="text" nz-input placeholder="Propertie name" style="width: 200px;"
+                [(ngModel)]="selectedSchema.properties[number.valueOf()][0]" />
+
+                <ng-container *ngIf="number == countless">
+                    <button nz-button *nzSpaceItem nzType="primary" nzShape="circle" (click)="addNewPropertie()"><span
+                            nz-icon nzType="plus-circle"></span></button>
+                    <button nz-button *nzSpaceItem nzType="primary" nzShape="circle" (click)="removePropertie()"><span
+                            nz-icon nzType="delete"></span></button>
+                </ng-container>
+
+            </nz-space>
+            <br>
+        </nz-input-group>
+    </div>
+
+</div>
+
+<div *ngIf="newSchemaOption">
+    <button nz-button nzType="primary" nzShape="round" (click)="saveSchema()"><span nz-icon nzType="save"></span>Save
+        schema</button>
+    <nz-divider nzType="vertical"></nz-divider>
+    <button nz-button nzType="primary" nzShape="round" (click)="deleteSchema()"><span nz-icon
+            nzType="delete"></span>Delete schema</button>
+</div>
