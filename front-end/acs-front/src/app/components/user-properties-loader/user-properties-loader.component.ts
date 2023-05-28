@@ -1,34 +1,26 @@
-import { Component } from '@angular/core';
-import { SchemaService } from '../schema.service';
-import { Schema } from '../schema';
-import { NzMessageService } from 'ng-zorro-antd/message'; 
+import { Component, Input } from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd/modal'; 
 import {NzUploadFile } from 'ng-zorro-antd/upload';
 import { Observable, Observer } from 'rxjs';
-import { User } from '../user';
+import { User } from '../../model/user';
+import { SchemaService } from '../../services/schema.service';
+import { Schema } from '../../model/schema';
+import { NzMessageService } from 'ng-zorro-antd/message'; 
 import { Location } from '@angular/common';
 
-
 @Component({
-  selector: 'app-create-user',
-  templateUrl: './create-user.component.html',
-  styleUrls: ['./create-user.component.css']
+  selector: 'app-user-properties-loader',
+  templateUrl: './user-properties-loader.component.html',
+  styleUrls: ['./user-properties-loader.component.css']
 })
+export class UserPropertiesLoaderComponent {
 
-export class CreateUserComponent {
+  //pass this arguments when it is initialized / called
+  @Input() selectedSchema!: Schema;
+  @Input() user!: User;
 
-  schemaList: Schema[] = []; 
-  selectedSchema: Schema = {id: "0", name: "", properties: [["",""]]};;
-  showSchemaFields: boolean = false; //show or hide new schema option
-  user: User = {id: "0", schema_id: "", public_properties: "", private_properties: "", properties: []};
-
-
-  //todo review this
-  checked = false;
-  date = null;
   userPhotoUrl?: string;
   loading = false;
-
 
 
   constructor(
@@ -38,9 +30,7 @@ export class CreateUserComponent {
     private location: Location,
   ) { }
 
-  ngOnInit(): void {
-    this.schemaList = this.schemaService.getSchemasList();
-  }
+
 
   getUserProp(prop: string[]): string[]{
     for(let p of this.user.properties){
@@ -51,15 +41,6 @@ export class CreateUserComponent {
     return ["",""]; //in case of error
   }
 
-  showSchema(): void {
-    console.log("selected schema: " + (this.selectedSchema as Schema).name);
-    // create user object empty
-    this.user.schema_id = (this.selectedSchema as Schema).id;
-    for(let prop of (this.selectedSchema as Schema).properties){
-      this.user.properties.push([prop[0],""]);
-    }
-    this.showSchemaFields = true;  
-  }
 
   // PHOTO FUNCTIONS
   handlePhoto(info: { file: NzUploadFile } ): void {
@@ -105,22 +86,5 @@ export class CreateUserComponent {
     reader.readAsDataURL(img);
   }
 
-
-
-
-  saveUser(): void {
-    console.log(this.user);
-    //todo redo copilot code
-    let res = this.schemaService.saveSchema(this.selectedSchema);
-    if(res){
-      this.message.create("success", 'User created!');
-    }else{
-      this.message.create("error", 'Error creating new user!');
-    }
-  }
-  
-  goBack(): void {
-    this.location.back();
-  }
 
 }

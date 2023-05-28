@@ -1,5 +1,5 @@
 <h1>User data</h1>
-
+<!-- 
 <form nz-form >
     <nz-form-item *ngFor="let field of headers; let i = index" [attr.data-index]="i">
       <nz-form-label [nzSpan]="6" nzFor={{field}}>{{field}}</nz-form-label>
@@ -11,7 +11,10 @@
 
 <div class="row" *ngIf="userValues?.length == 0 ">
     <p> User not found.</p>
-</div>
+</div> -->
+
+<app-user-properties-loader [user]="user" [selectedSchema]="selectedSchema"></app-user-properties-loader>
+
 
 
 <button nz-button nzType="primary" nzShape="round" (click)="goBack()"><span nz-icon nzType="left"></span>

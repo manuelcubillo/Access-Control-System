@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { User } from './user';
-import { USERLIST } from './mock-users';
+import { User } from '../model/user';
+import { USERLIST } from '../mocks/mock-users';
 import { Observable, of } from 'rxjs';
+import { v4 as uuid } from 'uuid';
 
 @Injectable({
   providedIn: 'root'
@@ -26,28 +27,33 @@ export class UserService {
   }
 
   /**
-   * update user public properties
+   * create a new user, add to the array and send to aws
+   * @param usr 
+   * @returns 
+   */
+  createNewUser(usr: User) : boolean{
+    usr.id = uuid(); // assing id to user
+    USERLIST.push(usr);
+    console.log("user created: ");
+    console.log(usr); 
+    //TODO SEND new user TO AWS
+    return true;
+  }
+
+
+  /**
+   * update user object
    * @param usr 
    */
   saveUser(usr : User) : boolean {
-    console.log(usr.id)
-    let usr_pu = JSON.parse(usr.public_properties);
-    console.log("data to save " + Object.values(usr_pu));
+    console.log("data to update ");
+    console.log(usr);
     
-    let usr_aux = USERLIST.find(u=> u.id === usr.id)!;
-    let usr_pu1 = JSON.parse(usr_aux.public_properties);
-    console.log("data to update " + Object.values(usr_pu1));
-
-
-    //update public properties of user list
+    //update user list
     USERLIST.forEach(u=> {
-      u.id === usr.id ? u.public_properties = usr.public_properties : u = u;
+      u.id === usr.id ? u = usr : u = u;
     });
 
-  
-    let usr_aux_3 = USERLIST.find(u=> u.id === usr.id)!;
-    let usr_pu3 = JSON.parse(usr_aux_3.public_properties);
-    console.log("final value: " + Object.values(usr_pu3));
     //TODO SEND UPDATE TO AWS
     return true; //check if there is not any error
   }

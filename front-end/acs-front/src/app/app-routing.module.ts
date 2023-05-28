@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { UserDetailsComponent } from './user-details/user-details.component';
-import { UsersViewComponent } from './users-view/users-view.component';
-import { SchemaComponent } from './schema/schema.component';
-import {CreateUserComponent} from './create-user/create-user.component';
+import { UserDetailsComponent } from './components/user-details/user-details.component';
+import { UsersViewComponent } from './components/users-view/users-view.component';
+import { SchemaComponent } from './components/schema/schema.component';
+import {CreateUserComponent} from './components/create-user/create-user.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/welcome' },

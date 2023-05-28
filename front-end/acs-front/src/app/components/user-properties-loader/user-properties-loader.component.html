@@ -1,0 +1,38 @@
+<nz-divider nzPlain nzText=""></nz-divider>
+<h2>User properties for {{selectedSchema.name}}</h2>
+
+<form nz-form *ngFor="let prop of selectedSchema.properties">
+
+    <nz-form-item>
+        <nz-form-label [nzSpan]="6" nzFor={{prop[0]}} nzRequired>{{prop[0]}}</nz-form-label>
+        <nz-form-control [nzSpan]="14">
+
+            <nz-date-picker *ngIf="prop[1]==='Date'" [(ngModel)]="getUserProp(prop)[1]" [ngModelOptions]="{standalone: true}">                    ></nz-date-picker>
+
+            <input *ngIf="prop[1]==='Text'" nz-input name={{prop[0]}} [(ngModel)]="getUserProp(prop)[1]">
+
+             <nz-input-number *ngIf="prop[1]==='Number'" name={{prop[0]}} [(ngModel)]="getUserProp(prop)[1]"></nz-input-number>
+
+            <label *ngIf="prop[1]==='Check'" nz-checkbox [(ngModel)]="getUserProp(prop)[1]" name="checked"></label>
+
+            <nz-upload *ngIf="prop[1]==='Photo'" 
+            class="avatar-uploader"
+            nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+            nzName="avatar"
+            nzListType="picture-card"
+            [nzShowUploadList]="false"
+            [nzBeforeUpload]="beforeUpload"
+            (nzChange)="handlePhoto($event)"
+          >
+            <ng-container *ngIf="!getUserProp(prop)[1]">
+              <span class="upload-icon" nz-icon [nzType]="loading ? 'loading' : 'plus'"></span>
+              <div class="ant-upload-text">Upload</div>
+            </ng-container>
+            <img *ngIf="getUserProp(prop)[1]" [src]="getUserProp(prop)[1]" style="width: 100%" />
+          </nz-upload>
+
+        </nz-form-control>
+
+    </nz-form-item>
+
+</form>

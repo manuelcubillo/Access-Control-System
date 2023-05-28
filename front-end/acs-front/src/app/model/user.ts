@@ -3,5 +3,5 @@ export interface User {
     schema_id: string;
     public_properties: string;
     private_properties: string;
-    properties: [string,string][] //list of properties (propertie name / propertie value)
+    properties: [string,any][] //list of properties (propertie name / propertie value)
   }

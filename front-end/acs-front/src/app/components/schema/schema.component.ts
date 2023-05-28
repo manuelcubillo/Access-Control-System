@@ -1,10 +1,11 @@
 import { Component, ElementRef, ViewChild, Renderer2 } from '@angular/core';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { SchemaService } from '../schema.service';
-import { Schema } from '../schema';
+import { SchemaService } from '../../services/schema.service';
+import { Schema } from '../../model/schema';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { v4 as uuid } from 'uuid';
 
 @Component({
   selector: 'app-schema',
@@ -42,7 +43,9 @@ export class SchemaComponent {
 
   newSchema(): void {
     this.newSchemaOption = true;  
-    this.selectedSchema = {id: "0", name: "", properties: [["",""]]};
+    //create a uuid for the new schema
+    let id = uuid();
+    this.selectedSchema = {id: id, name: "", properties: [["",""]]};
     this.count = 1;
     this.countless = 0; // IMPORTANT countless is count - 1 always to keep the index of the last element in view
   }
