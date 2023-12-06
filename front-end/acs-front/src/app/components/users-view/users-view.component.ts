@@ -18,6 +18,7 @@ import { SchemaService } from '../../services/schema.service';
 export class UsersViewComponent implements OnInit {
 
   usrList: User[] = [];
+  usrListOriginal: User[] = [];
   mainSchema: Schema = { id: "0", name: "", properties: [["", ""]] };
   schemaList: Schema[] = [];
   schemaListNames: string[] = [];
@@ -33,6 +34,7 @@ export class UsersViewComponent implements OnInit {
   ngOnInit(): void {
 
     this.usrList = this.userService.getUsers();
+    this.usrListOriginal = this.usrList;
     this.schemaList = this.schemaService.getSchemasList();
     this.mainSchema = this.schemaService.getUniversalSchema(this.schemaList);
     this.loadSchemaListNames()
@@ -74,20 +76,25 @@ export class UsersViewComponent implements OnInit {
 
 
   search(): void {
-    /*
+    console.log("in search method. search value: " + this.searchValue);
+    this.usrList = this.usrListOriginal; //reset the list to original
     if (this.searchValue === '') {
       this.restoreSearch()
     } else {
       // for each row, try to find the value
       // search value must match with the table value
-      this.tableValues = this.tableValues.filter(i => {
-        if (i.find(v => this.comparator(v, this.searchValue)) !== undefined) {
-          return true;
+      this.usrList = this.usrList.filter(i => {
+        let flag = false;
+        for (let v of i.properties) {
+          if (this.comparator(v[1], this.searchValue)) {
+            flag = true;
+          }
         }
-        return false;
+        console.log("rv: " + flag);
+        return flag;
       });
     }
-    */
+
   }
 
   // define the condition to confirm that the table value match with the search value
@@ -99,18 +106,22 @@ export class UsersViewComponent implements OnInit {
       flag = true;
 
     // transform the value to try to match with search value
-    let valueString = (value as unknown) as String;
+    let valueString: String = (value as unknown) as String;
 
-    if (valueString !== undefined) { //if casting success
-      flag = value.toLowerCase().includes(this.searchValue.toLowerCase())
+    try {
+      if (valueString !== undefined) { //if casting success
+        flag = valueString.toLowerCase().includes(this.searchValue.toLowerCase())
+      }
+    }catch{
+      //nothin to do
     }
 
-    return flag;
+      return flag;
   }
 
   restoreSearch(): void {
     this.searchValue = '';
-    //this.loadTableValues();
+    this.usrList = this.usrListOriginal;
   }
 
   schemaChangeEvent(index: number): void {
@@ -125,7 +136,7 @@ export class UsersViewComponent implements OnInit {
    */
   loadSchemaListNames(): void {
     //add all options to the schemaListNames
-    
+
     //remove schema with All as name. And reload it again
     this.schemaList = this.schemaList.filter(s => s.name != "All");
 

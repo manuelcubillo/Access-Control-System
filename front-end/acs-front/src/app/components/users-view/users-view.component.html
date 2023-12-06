@@ -1,7 +1,7 @@
 <h1>Users list</h1>
 
 <div class="search-box">
-  <input type="text" nz-input placeholder="Search" nzShape="round" [(ngModel)]="searchValue" />
+  <input type="text" nz-input placeholder="Search" nzShape="round" [(ngModel)]="searchValue" (ngModelChange)="search()" />
 
   <nz-divider nzType="vertical"></nz-divider>
 
@@ -10,7 +10,7 @@
     Search</button>
 
   <nz-divider nzType="vertical"></nz-divider>
-
+  
   <button nz-button nzSize="small" nzType="primary" nzShape="round" (click)="restoreSearch()">
     <span nz-icon nzType="close"></span>
     Reset search</button>
