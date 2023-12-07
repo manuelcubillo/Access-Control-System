@@ -1,14 +1,16 @@
 import { Component } from '@angular/core';
 import { SchemaService } from '../../services/schema.service';
-import { Schema } from '../../model/schema';
+import { Schema } from '../../model/schema/schemaIfz';
 import { NzMessageService } from 'ng-zorro-antd/message'; 
 import { NzModalService } from 'ng-zorro-antd/modal'; 
 import {NzUploadFile } from 'ng-zorro-antd/upload';
 import { Observable, Observer } from 'rxjs';
-import { User } from '../../model/user';
+import { UserIfz } from '../../model/user/userIfz';
 import { Location } from '@angular/common';
 import { UserPropertiesLoaderComponent } from '../user-properties-loader/user-properties-loader.component';
 import { UserService } from '../../services/user.service';
+import { AcsProp } from 'src/app/model/schema/acsProp';
+import { type } from 'src/app/model/schema/acsPropIfz';
 
 @Component({
   selector: 'app-create-user',
@@ -23,9 +25,9 @@ import { UserService } from '../../services/user.service';
 export class CreateUserComponent {
 
   schemaList: Schema[] = []; 
-  selectedSchema: Schema = {id: "0", name: "", properties: [["",""]]};;
+  selectedSchema: Schema = {id: "0", name: "", properties: [["", new AcsProp(type.default)]]};;
   showSchemaFields: boolean = false; //show or hide new schema option
-  user: User = {id: "0", name:"", schema_id: "", private_properties: "", properties: []};
+  user: UserIfz = {id: "0", name:"", schema_id: "", private_properties: "", properties: []};
 
 
   constructor(
@@ -46,7 +48,7 @@ export class CreateUserComponent {
     // create user object empty
     this.user.schema_id = (this.selectedSchema as Schema).id;
     for(let prop of (this.selectedSchema as Schema).properties){
-      this.user.properties.push([prop[0],""]);
+      this.user.properties.push([prop[0],AcsProp.prototype.getDefault()]);
     }
     this.showSchemaFields = true;  
   }

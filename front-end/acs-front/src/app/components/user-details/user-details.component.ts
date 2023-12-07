@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { User } from '../../model/user';
+import { UserIfz } from '../../model/user/userIfz';
 import { USERLIST } from '../../mocks/mock-users';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { UserService } from '../../services/user.service';
@@ -9,8 +9,9 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { Schema } from 'src/app/model/schema';
+import { Schema } from 'src/app/model/schema/schemaIfz';
 import { SchemaService } from 'src/app/services/schema.service';
+import { AcsProp } from 'src/app/model/schema/acsProp';
 
 @Component({
   selector: 'app-user-details',
@@ -20,7 +21,7 @@ import { SchemaService } from 'src/app/services/schema.service';
 
 export class UserDetailsComponent implements OnInit{
 
-  user : User = {id: "0", name:"", schema_id: "", private_properties: "", properties: []};; //user example
+  user : UserIfz = {id: "0", name:"", schema_id: "", private_properties: "", properties: []};; //user example
   selectedSchema!: Schema;
 
   constructor(
@@ -38,7 +39,7 @@ export class UserDetailsComponent implements OnInit{
     this.getUserSchema();
     //init user properties empty
     for(let prop of (this.selectedSchema as Schema).properties){
-      this.user.properties.push([prop[0],""]);
+      this.user.properties.push([prop[0], AcsProp.prototype.getDefault()]);
     }
 
   }

@@ -1,11 +1,13 @@
 import { Component, ElementRef, ViewChild, Renderer2 } from '@angular/core';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { SchemaService } from '../../services/schema.service';
-import { Schema } from '../../model/schema';
+import { Schema } from '../../model/schema/schemaIfz';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { v4 as uuid } from 'uuid';
+import { AcsProp } from 'src/app/model/schema/acsProp';
+import { type } from 'src/app/model/schema/acsPropIfz';
 
 @Component({
   selector: 'app-schema',
@@ -45,7 +47,7 @@ export class SchemaComponent {
     this.newSchemaOption = true;  
     //create a uuid for the new schema
     let id = uuid();
-    this.selectedSchema = {id: id, name: "", properties: [["",""]]};
+    this.selectedSchema = {id: id, name: "", properties: [["",new AcsProp(type.default)]]};
     this.count = 1;
     this.countless = 0; // IMPORTANT countless is count - 1 always to keep the index of the last element in view
   }
@@ -73,7 +75,7 @@ export class SchemaComponent {
     } else {
       this.count = this.count.valueOf() + 1;
       this.countless = this.countless.valueOf() + 1;
-      this.selectedSchema.properties.push(["",""]);
+      this.selectedSchema.properties.push(["",new AcsProp(type.default)]);
     }
   }
 

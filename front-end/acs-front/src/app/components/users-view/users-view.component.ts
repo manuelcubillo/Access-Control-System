@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { NzTableModule } from 'ng-zorro-antd/table';
-import { User } from '../../model/user';
+import { UserIfz } from '../../model/user/userIfz';
 import { UserService } from '../../services/user.service';
 import { USERLIST } from '../../mocks/mock-users';
 import { UserDetailsComponent } from '../user-details/user-details.component';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { Schema } from 'src/app/model/schema';
+import { Schema } from 'src/app/model/schema/schemaIfz';
 import { SchemaService } from '../../services/schema.service';
+import { AcsProp } from 'src/app/model/schema/acsProp';
+import { type } from 'src/app/model/schema/acsPropIfz';
 
 @Component({
   selector: 'app-users-view',
@@ -17,13 +19,14 @@ import { SchemaService } from '../../services/schema.service';
 
 export class UsersViewComponent implements OnInit {
 
-  usrList: User[] = [];
-  usrListOriginal: User[] = [];
-  mainSchema: Schema = { id: "0", name: "", properties: [["", ""]] };
+  usrList: UserIfz[] = [];
+  usrListOriginal: UserIfz[] = [];
+  mainSchema: Schema = { id: "0", name: "", properties: [["", new AcsProp(type.default)]] };
   schemaList: Schema[] = [];
   schemaListNames: string[] = [];
   searchValue = '';
   visible: boolean = false;
+  type = type;
 
   constructor(
     private location: Location,
@@ -48,7 +51,7 @@ export class UsersViewComponent implements OnInit {
    * @param prop 
    * @returns 
    */
-  getUserProp(usr: User, prop: string[]): any {
+  getUserProp(usr: UserIfz, prop: [string, AcsProp]): any {
     for (let p of usr.properties) {
       if (p[0] == prop[0]) {
         return p[1];
@@ -62,14 +65,14 @@ export class UsersViewComponent implements OnInit {
    * @param user 
    * @returns 
    */
-  isMySchema(user: User): boolean {
+  isMySchema(user: UserIfz): boolean {
     return user.schema_id == this.mainSchema.id || this.mainSchema.id == "0";
   }
 
 
 
 
-  navigate_user_details(usr: User): void {
+  navigate_user_details(usr: UserIfz): void {
     console.log("navigate to user details");
     console.log(usr);
     this.router.navigate(['/detail/' + usr.id])

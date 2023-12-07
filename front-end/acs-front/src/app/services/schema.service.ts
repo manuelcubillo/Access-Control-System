@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Schema } from '../model/schema';
+import { Schema } from '../model/schema/schemaIfz';
 import { SCHEMA_LIST_MOCK } from '../mocks/mock-schema';
 
 @Injectable({

@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
-import { Schema } from 'src/app/model/schema';
-import { User } from 'src/app/model/user';
+import { Schema } from 'src/app/model/schema/schemaIfz';
+import { UserIfz } from 'src/app/model/user/userIfz';
 import { SchemaService } from 'src/app/services/schema.service';
 import { UserService } from 'src/app/services/user.service';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -17,17 +17,17 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 })
 export class AccessControlViewComponent implements OnInit, AfterViewInit {
 
-  user: User = { id: "0", name: "", schema_id: "", private_properties: "", properties: [] };; //user example
+  user: UserIfz = { id: "0", name: "", schema_id: "", private_properties: "", properties: [] };; //user example
   defaultPicture: string = 'https://www.w3schools.com/howto/img_avatar.png'; //user picture example
   selectedSchema!: Schema;
   schemaList: Schema[] = [];
-  usrObs: Observable<User> | undefined;
+  usrObs: Observable<UserIfz> | undefined;
   searchValue: string = '';
   @ViewChild("searchElement")
   searchElement!: ElementRef;
   idNotFound: String = '';
   showUserDetails: boolean = false;
-  lastUsers: User[] = [];
+  lastUsers: UserIfz[] = [];
   lastUsersSchema: Schema[] = [];
 
   constructor(
@@ -146,7 +146,7 @@ export class AccessControlViewComponent implements OnInit, AfterViewInit {
    * details are showed
    * @param user 
    */
-  displayUser(user: User): void {
+  displayUser(user: UserIfz): void {
     this.user = user;
     this.selectedSchema = this.getSchemaFromList(this.user.schema_id);
   }

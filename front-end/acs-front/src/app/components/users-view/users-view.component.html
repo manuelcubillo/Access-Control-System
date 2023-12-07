@@ -33,14 +33,14 @@
     <!-- <tr *ngFor="let usr of usrList; let i = index" [attr.data-index]="i" (click)="navigate_user_details(i)"> -->
       <td *ngFor="let prop of mainSchema.properties; let j = index" [attr.data-index]="j">
 
-        <div nz-col *ngIf="isMySchema(usr) && (prop[1]==='Text' || prop[1]==='Number') ">{{getUserProp(usr, prop)}}</div>
+        <div nz-col *ngIf="isMySchema(usr) && (prop[1].getType()===type.TEXT || prop[1].getType()===type.NUMBER) ">{{getUserProp(usr, prop)}}</div>
 
         <!-- check if the user agree the schema selected or the schema is the universal. check this column is a Check propertie and check if the user has this propertie to be shown -->
-        <label *ngIf="isMySchema(usr) && prop[1]==='Check' && getUserProp(usr, prop)!='-'" nz-checkbox [ngModel]="getUserProp(usr, prop)"
+        <label *ngIf="isMySchema(usr) && prop[1].getType()===type.CHECKBOX && getUserProp(usr, prop)!='-'" nz-checkbox [ngModel]="getUserProp(usr, prop)"
           name="checked"></label>
 
         <!-- check if the user agree the schema selected or the schema is the universal. check this column is a Check propertie and check if the user has this propertie to be shown -->
-        <nz-date-picker *ngIf="isMySchema(usr) && prop[1]==='Date' && getUserProp(usr, prop)!='-'" [ngModel]="getUserProp(usr, prop)"
+        <nz-date-picker *ngIf="isMySchema(usr) && prop[1].getType()===type.DATE && getUserProp(usr, prop)!='-'" [ngModel]="getUserProp(usr, prop)"
           [ngModelOptions]="{standalone: true}"></nz-date-picker>
 
 

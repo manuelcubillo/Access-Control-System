@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { User } from '../model/user';
+import { UserIfz } from '../model/user/userIfz';
 import { USERLIST } from '../mocks/mock-users';
 import { Observable, of } from 'rxjs';
 import { v4 as uuid } from 'uuid';
@@ -12,7 +12,7 @@ export class UserService {
 
   constructor() { }
 
-  getUsers(): User[]{
+  getUsers(): UserIfz[]{
     return USERLIST;
   }
 
@@ -21,7 +21,7 @@ export class UserService {
    * @param id 
    * @returns 
    */
-  getUser(id: string): Observable<User> {
+  getUser(id: string): Observable<UserIfz> {
     const usr = USERLIST.find(u=> u.id === id)!;
     return of(usr);
   }
@@ -31,7 +31,7 @@ export class UserService {
    * @param usr 
    * @returns 
    */
-  createNewUser(usr: User) : boolean{
+  createNewUser(usr: UserIfz) : boolean{
     usr.id = uuid(); // assing id to user
     USERLIST.push(usr);
     console.log("user created: ");
@@ -45,7 +45,7 @@ export class UserService {
    * update user object
    * @param usr 
    */
-  saveUser(usr : User) : boolean {
+  saveUser(usr : UserIfz) : boolean {
     console.log("data to update ");
     console.log(usr);
     
@@ -63,7 +63,7 @@ export class UserService {
    * @param usr 
    * @returns 
    */
-  deleteUser(usr : User) : boolean{
+  deleteUser(usr : UserIfz) : boolean{
     //remove element from the list    
     const aux = USERLIST.filter( u=> u.id === usr.id)[0]
     const index: number = USERLIST.indexOf(aux);

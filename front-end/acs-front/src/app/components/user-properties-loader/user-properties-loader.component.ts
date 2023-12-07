@@ -2,11 +2,13 @@ import { Component, Input } from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd/modal'; 
 import {NzUploadFile } from 'ng-zorro-antd/upload';
 import { Observable, Observer } from 'rxjs';
-import { User } from '../../model/user';
+import { UserIfz } from '../../model/user/userIfz';
 import { SchemaService } from '../../services/schema.service';
-import { Schema } from '../../model/schema';
+import { Schema } from '../../model/schema/schemaIfz';
 import { NzMessageService } from 'ng-zorro-antd/message'; 
 import { Location } from '@angular/common';
+import { type } from 'src/app/model/schema/acsPropIfz';
+import { AcsProp } from 'src/app/model/schema/acsProp';
 
 @Component({
   selector: 'app-user-properties-loader',
@@ -17,10 +19,11 @@ export class UserPropertiesLoaderComponent {
 
   //pass this arguments when it is initialized / called
   @Input() selectedSchema!: Schema;
-  @Input() user!: User;
+  @Input() user!: UserIfz;
 
   userPhotoUrl?: string;
   loading = false;
+  type = type;
 
 
   constructor(
@@ -32,7 +35,7 @@ export class UserPropertiesLoaderComponent {
 
 
 
-  getUserProp(prop: string[]): string[]{
+  getUserProp(prop: [string, AcsProp]): string[]{
     for(let p of this.user.properties){
       if(p[0] == prop[0]){
         return p;
