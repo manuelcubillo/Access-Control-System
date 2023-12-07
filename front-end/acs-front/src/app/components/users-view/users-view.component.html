@@ -22,11 +22,6 @@
 
 <nz-table #basicTable [nzData]="usrList">
 
-  <!-- <nz-filter-trigger [(nzVisible)]="visible" [nzActive]="searchValue.length > 0">
-    <span nz-icon nzType="search"></span>
-  </nz-filter-trigger> -->
-
-
   <thead>
     <tr>
       <th *ngFor="let header of mainSchema.properties">{{header[0]}}</th>

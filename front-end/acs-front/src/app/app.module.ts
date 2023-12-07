@@ -35,6 +35,9 @@ import { CreateUserComponent } from './components/create-user/create-user.compon
 import { UserPropertiesLoaderComponent } from './components/user-properties-loader/user-properties-loader.component';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSegmentedModule } from 'ng-zorro-antd/segmented';
+import { AccessControlViewComponent } from './components/access-control-view/access-control-view.component';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 
 
 registerLocaleData(es);
@@ -46,7 +49,8 @@ registerLocaleData(es);
     UserDetailsComponent,
     SchemaComponent,
     CreateUserComponent,
-    UserPropertiesLoaderComponent
+    UserPropertiesLoaderComponent,
+    AccessControlViewComponent
   ],
   imports: [
     BrowserModule,
@@ -71,7 +75,9 @@ registerLocaleData(es);
     NzInputNumberModule,
     NzCheckboxModule,
     NzRadioModule,
-    NzSegmentedModule
+    NzSegmentedModule, 
+    NzCardModule,
+    NzAvatarModule
   ],
   providers: [
     { provide: NZ_I18N, useValue: es_ES }

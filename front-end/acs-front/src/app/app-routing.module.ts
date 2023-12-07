@@ -4,13 +4,15 @@ import { UserDetailsComponent } from './components/user-details/user-details.com
 import { UsersViewComponent } from './components/users-view/users-view.component';
 import { SchemaComponent } from './components/schema/schema.component';
 import {CreateUserComponent} from './components/create-user/create-user.component';
+import { AccessControlViewComponent } from './components/access-control-view/access-control-view.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: '/welcome' },
   { path: 'users-view', component : UsersViewComponent },
   { path: 'create-user', component : CreateUserComponent },
   { path: 'schema', component : SchemaComponent },
-  { path: 'detail/:id', component : UserDetailsComponent }
+  { path: 'detail/:id', component : UserDetailsComponent },
+  { path: 'acs', component : AccessControlViewComponent }
 ];
 
 @NgModule({

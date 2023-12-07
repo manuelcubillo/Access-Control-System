@@ -20,7 +20,7 @@ import { SchemaService } from 'src/app/services/schema.service';
 
 export class UserDetailsComponent implements OnInit{
 
-  user : User = {id: "0", schema_id: "", public_properties: "", private_properties: "", properties: []};; //user example
+  user : User = {id: "0", name:"", schema_id: "", private_properties: "", properties: []};; //user example
   selectedSchema!: Schema;
 
   constructor(

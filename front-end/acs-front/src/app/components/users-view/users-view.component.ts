@@ -23,6 +23,7 @@ export class UsersViewComponent implements OnInit {
   schemaList: Schema[] = [];
   schemaListNames: string[] = [];
   searchValue = '';
+  visible: boolean = false;
 
   constructor(
     private location: Location,

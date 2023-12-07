@@ -1,0 +1,28 @@
+<h1>Acces Control</h1>
+
+<div class="search-box">
+    <input #searchElement type="text" nz-input placeholder="Search" nzShape="round" (keyup.enter)="search()"
+        [(ngModel)]="searchValue" autofocus />
+
+    <nz-divider nzType="vertical"></nz-divider>
+
+    <button nz-button nzSize="small" nzType="primary" nzShape="round" (click)="search()" class="search-button">
+        <span nz-icon nzType="search"></span>
+        Search</button>
+</div>
+
+<div *ngIf="showUserDetails">
+    <app-user-properties-loader [user]="user" [selectedSchema]="selectedSchema"></app-user-properties-loader>
+</div>
+
+<div style="overflow-y: scroll; height:400px;">
+    <div *ngFor="let lu of lastUsers; let i = index;">
+        <nz-card style="width: 300px;margin-top: 16px" (click)="displayUser(lu)">
+            <nz-card-meta [nzAvatar]="avatarTemplate" nzTitle={{lu.name}}
+                nzDescription={{lastUsersSchema[i].name}}></nz-card-meta>
+        </nz-card>
+        <ng-template #avatarTemplate>
+            <nz-avatar nzSrc={{defaultPicture}}></nz-avatar>
+        </ng-template>
+    </div>
+</div>

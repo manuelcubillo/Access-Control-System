@@ -25,7 +25,7 @@ export class CreateUserComponent {
   schemaList: Schema[] = []; 
   selectedSchema: Schema = {id: "0", name: "", properties: [["",""]]};;
   showSchemaFields: boolean = false; //show or hide new schema option
-  user: User = {id: "0", schema_id: "", public_properties: "", private_properties: "", properties: []};
+  user: User = {id: "0", name:"", schema_id: "", private_properties: "", properties: []};
 
 
   constructor(
