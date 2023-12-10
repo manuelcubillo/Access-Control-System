@@ -7,7 +7,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { v4 as uuid } from 'uuid';
 import { AcsProp } from 'src/app/model/schema/acsProp';
-import { type } from 'src/app/model/schema/acsPropIfz';
+import { ACS_PROP_TYPE } from 'src/app/model/schema/acsPropIfz';
 
 @Component({
   selector: 'app-schema',
@@ -22,6 +22,7 @@ import { type } from 'src/app/model/schema/acsPropIfz';
 export class SchemaComponent {
 
   selectedSchema!: Schema;
+  acsType: ACS_PROP_TYPE = ACS_PROP_TYPE.default;
   schemaList: Schema[] = []; 
   count: Number = 1;
   countless: Number = 1; // IMPORTANT countless is count - 1 always to keep the index of the last element in view
@@ -47,7 +48,7 @@ export class SchemaComponent {
     this.newSchemaOption = true;  
     //create a uuid for the new schema
     let id = uuid();
-    this.selectedSchema = {id: id, name: "", properties: [["",new AcsProp(type.default)]]};
+    this.selectedSchema = this.schemaService.getDefaultSchema();
     this.count = 1;
     this.countless = 0; // IMPORTANT countless is count - 1 always to keep the index of the last element in view
   }
@@ -58,6 +59,7 @@ export class SchemaComponent {
    */
   showSchema(): void {
     console.log("selected schema: " + (this.selectedSchema as Schema).name);
+    console.log(this.selectedSchema.properties[1].type);
     this.newSchemaOption = true;  
     this.count = (this.selectedSchema as Schema).properties.length;
     this.countless = this.count.valueOf() - 1;
@@ -75,7 +77,7 @@ export class SchemaComponent {
     } else {
       this.count = this.count.valueOf() + 1;
       this.countless = this.countless.valueOf() + 1;
-      this.selectedSchema.properties.push(["",new AcsProp(type.default)]);
+      this.selectedSchema.properties.push(new AcsProp("",null,ACS_PROP_TYPE.default));
     }
   }
 

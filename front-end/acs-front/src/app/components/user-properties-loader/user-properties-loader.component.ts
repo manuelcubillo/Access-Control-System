@@ -1,14 +1,15 @@
 import { Component, Input } from '@angular/core';
-import { NzModalService } from 'ng-zorro-antd/modal'; 
-import {NzUploadFile } from 'ng-zorro-antd/upload';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzUploadFile } from 'ng-zorro-antd/upload';
 import { Observable, Observer } from 'rxjs';
 import { UserIfz } from '../../model/user/userIfz';
 import { SchemaService } from '../../services/schema.service';
 import { Schema } from '../../model/schema/schemaIfz';
-import { NzMessageService } from 'ng-zorro-antd/message'; 
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { Location } from '@angular/common';
-import { type } from 'src/app/model/schema/acsPropIfz';
+import { ACS_PROP_TYPE, AcsPropIfz } from 'src/app/model/schema/acsPropIfz';
 import { AcsProp } from 'src/app/model/schema/acsProp';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-user-properties-loader',
@@ -23,30 +24,40 @@ export class UserPropertiesLoaderComponent {
 
   userPhotoUrl?: string;
   loading = false;
-  type = type;
+  type = ACS_PROP_TYPE;
+  flipo: string = "";
 
 
   constructor(
     private schemaService: SchemaService,
+    private userService: UserService,
     private message: NzMessageService,
     private modal: NzModalService,
     private location: Location,
   ) { }
 
 
-
-  getUserProp(prop: [string, AcsProp]): string[]{
-    for(let p of this.user.properties){
-      if(p[0] == prop[0]){
+/*
+* DEPRECATED!
+* ATTETION TO USE!
+*
+  getUserProp(prop: AcsPropIfz): AcsPropIfz {
+    //let rv = this.userService.getUserPropOfSchema(this.user, prop);
+    //if (rv == null) {
+    //  rv = "";
+    //}
+    for (let p of this.user.properties) {
+      if (p.getPropName() == prop.getPropName()) {
         return p;
       }
     }
-    return ["",""]; //in case of error
-  }
 
+    return AcsProp.prototype.getDefault();
+  }
+  */
 
   // PHOTO FUNCTIONS
-  handlePhoto(info: { file: NzUploadFile } ): void {
+  handlePhoto(info: { file: NzUploadFile }): void {
     switch (info.file.status) {
       case 'uploading':
         this.loading = true;

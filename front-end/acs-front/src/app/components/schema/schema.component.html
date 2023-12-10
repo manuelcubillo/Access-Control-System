@@ -28,18 +28,24 @@
     <div *ngFor="let number of numbers">
         <nz-input-group id="{{number}}" *ngIf="number < count" nzCompact>
             <nz-space [nzSize]="'middle'">
+
+                 <input *nzSpaceItem type="text" nz-input placeholder="Propertie name" style="width: 200px;"
+                [(ngModel)]="selectedSchema.properties[number.valueOf()].propName" />
+
                 <nz-select *nzSpaceItem nzPlaceHolder="Propertie type" [nzAllowClear]="false"
-                    [(ngModel)]="selectedSchema.properties[number.valueOf()][1]">
-                    <nz-option [nzLabel]="'Text'" [nzValue]="'Text'"></nz-option>
-                    <nz-option [nzLabel]="'Number'" [nzValue]="'Number'"></nz-option>
-                    <nz-option [nzLabel]="'Check'" [nzValue]="'Check'"></nz-option>
-                    <nz-option [nzLabel]="'Date'" [nzValue]="'Date'"></nz-option>
-                    <nz-option [nzLabel]="'Photo'" [nzValue]="'Photo'"></nz-option>
-                    <nz-option [nzLabel]="'QR'" [nzValue]="'QR'"></nz-option>
+                    [(ngModel)]="selectedSchema.properties[number.valueOf()].type">
+                    <nz-option [nzLabel]="'Text'" [nzValue]="6"></nz-option>
+                    <nz-option [nzLabel]="'Number'" [nzValue]="7"></nz-option>
+                    <nz-option [nzLabel]="'Check'" [nzValue]="8"></nz-option>
+                    <nz-option [nzLabel]="'Allowed'" [nzValue]="4"></nz-option>
+                    <nz-option [nzLabel]="'Date'" [nzValue]="5"></nz-option>
+                    <nz-option [nzLabel]="'Photo'" [nzValue]="2"></nz-option>
+                    <nz-option [nzLabel]="'Initial date'" [nzValue]="0"></nz-option>
+                    <nz-option [nzLabel]="'End date'" [nzValue]="1"></nz-option>
+                    <nz-option [nzLabel]="'Number Accesses'" [nzValue]="3"></nz-option>
                 </nz-select>
 
-                <input *nzSpaceItem type="text" nz-input placeholder="Propertie name" style="width: 200px;"
-                [(ngModel)]="selectedSchema.properties[number.valueOf()][0]" />
+               
 
                 <ng-container *ngIf="number == countless">
                     <button nz-button *nzSpaceItem nzType="primary" nzShape="circle" (click)="addNewPropertie()"><span

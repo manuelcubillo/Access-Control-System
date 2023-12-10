@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { Schema } from 'src/app/model/schema/schemaIfz';
 import { SchemaService } from '../../services/schema.service';
 import { AcsProp } from 'src/app/model/schema/acsProp';
-import { type } from 'src/app/model/schema/acsPropIfz';
+import { ACS_PROP_TYPE, AcsPropIfz } from 'src/app/model/schema/acsPropIfz';
 
 @Component({
   selector: 'app-users-view',
@@ -21,12 +21,12 @@ export class UsersViewComponent implements OnInit {
 
   usrList: UserIfz[] = [];
   usrListOriginal: UserIfz[] = [];
-  mainSchema: Schema = { id: "0", name: "", properties: [["", new AcsProp(type.default)]] };
+  mainSchema: Schema = this.schemaService.getDefaultSchema();
   schemaList: Schema[] = [];
   schemaListNames: string[] = [];
   searchValue = '';
   visible: boolean = false;
-  type = type;
+  type = ACS_PROP_TYPE;
 
   constructor(
     private location: Location,
@@ -51,13 +51,12 @@ export class UsersViewComponent implements OnInit {
    * @param prop 
    * @returns 
    */
-  getUserProp(usr: UserIfz, prop: [string, AcsProp]): any {
-    for (let p of usr.properties) {
-      if (p[0] == prop[0]) {
-        return p[1];
-      }
+  getUserProp(usr: UserIfz, prop: AcsPropIfz): any {
+    let rv = this.userService.getUserPropOfSchema(usr, prop);
+    if (rv == null) {
+      rv = "-";
     }
-    return "-"; //in case of error
+    return rv;
   }
 
   /**
@@ -90,7 +89,7 @@ export class UsersViewComponent implements OnInit {
       this.usrList = this.usrList.filter(i => {
         let flag = false;
         for (let v of i.properties) {
-          if (this.comparator(v[1], this.searchValue)) {
+          if (this.comparator(v.getPropValue(), this.searchValue)) {
             flag = true;
           }
         }
@@ -116,11 +115,11 @@ export class UsersViewComponent implements OnInit {
       if (valueString !== undefined) { //if casting success
         flag = valueString.toLowerCase().includes(this.searchValue.toLowerCase())
       }
-    }catch{
+    } catch {
       //nothin to do
     }
 
-      return flag;
+    return flag;
   }
 
   restoreSearch(): void {

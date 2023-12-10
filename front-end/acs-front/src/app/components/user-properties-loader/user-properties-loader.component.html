@@ -1,38 +1,37 @@
 <nz-divider nzPlain nzText=""></nz-divider>
 <h2>User properties for {{selectedSchema.name}}</h2>
 
-<form nz-form *ngFor="let prop of selectedSchema.properties">
+<!--<form nz-form *ngFor="let prop of selectedSchema.properties">-->
+<form nz-form *ngFor="let prop of user.properties">
 
-    <nz-form-item>
-        <nz-form-label [nzSpan]="6" nzFor={{prop[0]}} nzRequired>{{prop[0]}}</nz-form-label>
-        <nz-form-control [nzSpan]="14">
+  <nz-form-item>
+    <nz-form-label [nzSpan]="6" nzFor={{prop.getPropName()}} nzRequired>{{prop.getPropName()}}</nz-form-label>
+    <nz-form-control [nzSpan]="14">
 
-            <nz-date-picker *ngIf="prop[1].getType()===type.DATE" [(ngModel)]="getUserProp(prop)[1]" [ngModelOptions]="{standalone: true}"></nz-date-picker>
+      
+      <nz-date-picker *ngIf="prop.isThisTypeOfProp(type.DATE) || prop.isThisTypeOfProp(type.INIT_DATE) || prop.isThisTypeOfProp(type.END_DATE)" [(ngModel)]="prop.propValue"
+        [ngModelOptions]="{standalone: true}"></nz-date-picker>
 
-            <input *ngIf="prop[1].getType()===type.TEXT" nz-input name={{prop[0]}} [(ngModel)]="getUserProp(prop)[1]">
+      <input *ngIf="prop.isThisTypeOfProp(type.TEXT)" nz-input name={{prop.getPropName()}} [(ngModel)]="prop.propValue">
 
-             <nz-input-number *ngIf="prop[1].getType()===type.NUMBER" name={{prop[0]}} [(ngModel)]="getUserProp(prop)[1]"></nz-input-number>
+      <nz-input-number *ngIf="prop.isThisTypeOfProp(type.NUMBER) || prop.isThisTypeOfProp(type.NUMBER_ACCESSES)" name={{prop.getPropName()}}
+        [(ngModel)]="prop.propValue"></nz-input-number>
+      
+      
+      <label *ngIf="prop.isThisTypeOfProp(type.ALLOWED) || prop.isThisTypeOfProp(type.CHECKBOX)" nz-checkbox [(ngModel)]="prop.propValue" name="checked"></label>
 
-            <label *ngIf="prop[1].getType()===type.CHECKBOX" nz-checkbox [(ngModel)]="getUserProp(prop)[1]" name="checked"></label>
+      <nz-upload *ngIf="prop.isThisTypeOfProp(type.PHOTO)" class="avatar-uploader"
+        nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76" nzName="avatar" nzListType="picture-card"
+        [nzShowUploadList]="false" [nzBeforeUpload]="beforeUpload" (nzChange)="handlePhoto($event)">
+        <ng-container *ngIf="!prop.propValue">
+          <span class="upload-icon" nz-icon [nzType]="loading ? 'loading' : 'plus'"></span>
+          <div class="ant-upload-text">Upload</div>
+        </ng-container>
+        <img *ngIf="prop.propValue" [src]="prop.propValue" style="width: 100%" />
+      </nz-upload>
 
-            <nz-upload *ngIf="prop[1].getType()===type.PHOTO" 
-            class="avatar-uploader"
-            nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-            nzName="avatar"
-            nzListType="picture-card"
-            [nzShowUploadList]="false"
-            [nzBeforeUpload]="beforeUpload"
-            (nzChange)="handlePhoto($event)"
-          >
-            <ng-container *ngIf="!getUserProp(prop)[1]">
-              <span class="upload-icon" nz-icon [nzType]="loading ? 'loading' : 'plus'"></span>
-              <div class="ant-upload-text">Upload</div>
-            </ng-container>
-            <img *ngIf="getUserProp(prop)[1]" [src]="getUserProp(prop)[1]" style="width: 100%" />
-          </nz-upload>
+    </nz-form-control>
 
-        </nz-form-control>
-
-    </nz-form-item>
+  </nz-form-item>
 
 </form>

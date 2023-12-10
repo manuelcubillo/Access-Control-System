@@ -3,5 +3,9 @@ import { AcsPropIfz } from "./acsPropIfz";
 export interface Schema {
     id: string,
     name: string,
-    properties: [string,AcsPropIfz][] //list of properties (propertie name / propertie type)
+    properties: AcsPropIfz[] //list of properties 
+    getId(): string
+    getName(): string
+    getProperties(): AcsPropIfz[]
+    getDefaultSchema(): Schema;
 }

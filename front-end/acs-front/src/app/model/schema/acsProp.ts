@@ -1,14 +1,28 @@
-import { AcsPropIfz, type } from "./acsPropIfz";
+import { AcsPropIfz, ACS_PROP_TYPE } from "./acsPropIfz";
 
 export class AcsProp implements AcsPropIfz {
-    type: type;
+    propName: string;
+    propValue: any;
+    type: ACS_PROP_TYPE;
+    typeAsString: string;
+    defName:string = "";
+    defValue:string = "";
     
-    constructor(type: type) {
+    constructor(propName:string, propValue:any, type: ACS_PROP_TYPE) {
+        this.propName = propName;
+        this.propValue = propValue;
         this.type = type;
+        this.typeAsString = (type as unknown) as string;
     }
 
+
+    getPropValue(): any {
+        return this.propValue;
+    }
+
+
     getDefault(): AcsPropIfz {
-        return new AcsProp(type.default);
+        return new AcsProp(this.defName, this.defValue, ACS_PROP_TYPE.default);
     }
     
     /**
@@ -17,26 +31,38 @@ export class AcsProp implements AcsPropIfz {
      */
     isACSprop(): boolean {
         switch(this.type) {
-            case type.ALLOWED:
-            case type.INIT_DATE:
-            case type.END_DATE:
-            case type.NUMBER_ACCESSES:
-            case type.PHOTO:
+            case ACS_PROP_TYPE.ALLOWED:
+            case ACS_PROP_TYPE.INIT_DATE:
+            case ACS_PROP_TYPE.END_DATE:
+            case ACS_PROP_TYPE.NUMBER_ACCESSES:
+            case ACS_PROP_TYPE.PHOTO:
                 return true;
             default:
                 return false;
         }
     }
     
-    getType(): type {
+    getType(): ACS_PROP_TYPE {
         return this.type;
     } 
+
     
     /**
      * convert value as string 
      **/
-    getValue(): string {
+    getTypeAsString(): string {
         return (this.type as unknown) as string;
+    }
+
+    isThisTypeOfProp(type: ACS_PROP_TYPE): boolean {
+        return type === this.type;
+    }
+
+    getPropType(): ACS_PROP_TYPE {
+        return this.type;
+    }
+    getPropName(): string {
+        return this.propName;
     }
 
 

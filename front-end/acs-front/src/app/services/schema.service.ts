@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Schema } from '../model/schema/schemaIfz';
 import { SCHEMA_LIST_MOCK } from '../mocks/mock-schema';
+import { SchemaImpl } from '../model/schema/schema';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,10 @@ export class SchemaService {
 
   
   constructor() { }
+
+  getDefaultSchema(): Schema {
+    return SchemaImpl.prototype.getDefaultSchema();
+  }
 
   getUserSchema(id: string): Schema{
     //todo get schema from aws
@@ -23,7 +28,7 @@ export class SchemaService {
 
   saveSchema(schema: Schema): boolean{ 
     //todo save schema to aws
-    schema.properties = schema.properties.filter(p => p[0] != "");  //filter not empty properties
+    schema.properties = schema.properties.filter(p => p.getPropName() != "");  //filter not empty properties
     SCHEMA_LIST_MOCK.push(schema);
     return true;
   }
@@ -38,12 +43,12 @@ export class SchemaService {
    * @returns a schema with all uniques properties from all schemas
    */
   getUniversalSchema(schemaList: Schema[]): Schema {
-    let completeSchema: Schema = { id: "0", name: "All", properties: [] };  //create a empty schema
+    let completeSchema: Schema = new SchemaImpl("0","All", []);  //create a empty schema
     let uniqueValues: string[] = [];
     for (let schema of schemaList) {
       for (let prop of schema.properties) {
-        if (!uniqueValues.includes(prop[0])) {
-          uniqueValues.push(prop[0]);
+        if (!uniqueValues.includes(prop.getPropName())) {
+          uniqueValues.push(prop.getPropName());
           completeSchema.properties.push(prop);
         }
       }

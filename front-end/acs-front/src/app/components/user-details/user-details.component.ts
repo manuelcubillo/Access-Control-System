@@ -21,7 +21,7 @@ import { AcsProp } from 'src/app/model/schema/acsProp';
 
 export class UserDetailsComponent implements OnInit{
 
-  user : UserIfz = {id: "0", name:"", schema_id: "", private_properties: "", properties: []};; //user example
+  user : UserIfz = this.userService.getDefaultUser(); //user example
   selectedSchema!: Schema;
 
   constructor(
@@ -38,9 +38,10 @@ export class UserDetailsComponent implements OnInit{
     this.getUser();
     this.getUserSchema();
     //init user properties empty
-    for(let prop of (this.selectedSchema as Schema).properties){
-      this.user.properties.push([prop[0], AcsProp.prototype.getDefault()]);
-    }
+    
+    /*for(let prop of (this.selectedSchema as Schema).properties){
+      this.user.properties.push(new AcsProp(prop.getPropName(), prop.getPropValue(), prop.getType()));
+    }*/
 
   }
 

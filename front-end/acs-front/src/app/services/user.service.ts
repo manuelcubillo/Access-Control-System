@@ -3,6 +3,8 @@ import { UserIfz } from '../model/user/userIfz';
 import { USERLIST } from '../mocks/mock-users';
 import { Observable, of } from 'rxjs';
 import { v4 as uuid } from 'uuid';
+import { User } from '../model/user/user';
+import { AcsPropIfz } from '../model/schema/acsPropIfz';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +13,10 @@ import { v4 as uuid } from 'uuid';
 export class UserService {
 
   constructor() { }
+
+  getDefaultUser(): UserIfz {
+    return User.prototype.getDefaultUser();
+  }
 
   getUsers(): UserIfz[]{
     return USERLIST;
@@ -26,6 +32,20 @@ export class UserService {
     return of(usr);
   }
 
+  /**
+   * ATTENTION TO USE!!!!
+   * @param usr 
+   * @param prop 
+   * @returns 
+   */
+  getUserPropOfSchema(usr: UserIfz, prop: AcsPropIfz): any{
+    for (let p of usr.properties) {
+      if (p.getPropName() == prop.getPropName()) {
+        return p.getPropValue();
+      }
+    }
+    return null; //in case of error
+  }
   /**
    * create a new user, add to the array and send to aws
    * @param usr 

@@ -17,7 +17,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 })
 export class AccessControlViewComponent implements OnInit, AfterViewInit {
 
-  user: UserIfz = { id: "0", name: "", schema_id: "", private_properties: "", properties: [] };; //user example
+  user: UserIfz = this.userService.getDefaultUser(); //user example
   defaultPicture: string = 'https://www.w3schools.com/howto/img_avatar.png'; //user picture example
   selectedSchema!: Schema;
   schemaList: Schema[] = [];
@@ -126,7 +126,7 @@ export class AccessControlViewComponent implements OnInit, AfterViewInit {
   }
 
   setDefaultUser(): void {
-    this.user = { id: "0", name: "", schema_id: "", private_properties: "", properties: [] };
+    this.user = this.userService.getDefaultUser();
     this.searchValue = '';
     this.searchElement.nativeElement.focus();
   }

@@ -10,7 +10,7 @@ import { Location } from '@angular/common';
 import { UserPropertiesLoaderComponent } from '../user-properties-loader/user-properties-loader.component';
 import { UserService } from '../../services/user.service';
 import { AcsProp } from 'src/app/model/schema/acsProp';
-import { type } from 'src/app/model/schema/acsPropIfz';
+import { ACS_PROP_TYPE } from 'src/app/model/schema/acsPropIfz';
 
 @Component({
   selector: 'app-create-user',
@@ -25,9 +25,9 @@ import { type } from 'src/app/model/schema/acsPropIfz';
 export class CreateUserComponent {
 
   schemaList: Schema[] = []; 
-  selectedSchema: Schema = {id: "0", name: "", properties: [["", new AcsProp(type.default)]]};;
+  selectedSchema: Schema = this.schemaService.getDefaultSchema();
   showSchemaFields: boolean = false; //show or hide new schema option
-  user: UserIfz = {id: "0", name:"", schema_id: "", private_properties: "", properties: []};
+  user: UserIfz = this.userService.getDefaultUser();
 
 
   constructor(
@@ -44,11 +44,11 @@ export class CreateUserComponent {
 
 
   showSchema(): void {
-    console.log("selected schema: " + (this.selectedSchema as Schema).name);
     // create user object empty
     this.user.schema_id = (this.selectedSchema as Schema).id;
+    this.user.properties = [];
     for(let prop of (this.selectedSchema as Schema).properties){
-      this.user.properties.push([prop[0],AcsProp.prototype.getDefault()]);
+      this.user.properties.push(new AcsProp(prop.getPropName(),"", prop.getType()));
     }
     this.showSchemaFields = true;  
   }
