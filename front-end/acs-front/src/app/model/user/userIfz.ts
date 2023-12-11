@@ -8,7 +8,7 @@ export interface UserIfz {
     private_properties: string;
     properties: AcsPropIfz[] //list of properties (propertie name / propertie value)
     //properties: [string, any][] //list of properties (propertie name / propertie value)
-    access(schema:Schema):boolean;
+    access():boolean;
     getProperties():AcsPropIfz[];
     getDefaultUser():UserIfz;
   }

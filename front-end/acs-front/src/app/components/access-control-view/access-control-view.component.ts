@@ -19,7 +19,7 @@ export class AccessControlViewComponent implements OnInit, AfterViewInit {
 
   user: UserIfz = this.userService.getDefaultUser(); //user example
   defaultPicture: string = 'https://www.w3schools.com/howto/img_avatar.png'; //user picture example
-  selectedSchema!: Schema;
+  selectedSchema: Schema = this.schemaService.getDefaultSchema();
   schemaList: Schema[] = [];
   usrObs: Observable<UserIfz> | undefined;
   searchValue: string = '';
@@ -87,8 +87,7 @@ export class AccessControlViewComponent implements OnInit, AfterViewInit {
    * @returns 
    */
   private checkAccess() {
-    let flag = true;
-    return flag;
+    return this.user.access();
   }
 
   /**
@@ -106,12 +105,12 @@ export class AccessControlViewComponent implements OnInit, AfterViewInit {
    * thing to do if the user is denied
    */
   private accessDenied() {
+    this.selectedSchema = this.getSchemaFromList(this.user.schema_id);
     this.showUserDetails = true;
     this.modal.warning({
       nzTitle: 'User not allowed',
       nzContent: 'Please contact administrator. ID: ' + this.searchValue
     });
-    this.setDefaultUser();
   }
 
   /**

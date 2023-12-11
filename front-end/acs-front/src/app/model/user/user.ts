@@ -1,7 +1,7 @@
 import { AcsProp } from "../schema/acsProp";
 import { AcsPropIfz, ACS_PROP_TYPE } from "../schema/acsPropIfz";
 import { Schema } from "../schema/schemaIfz";
-import {UserIfz } from "./userIfz";
+import { UserIfz } from "./userIfz";
 
 export class User implements UserIfz {
     id: string;
@@ -20,7 +20,7 @@ export class User implements UserIfz {
     }
 
     getDefaultUser(): UserIfz {
-        return new User("","","",[],'');
+        return new User("", "", "", [], '');
     }
 
     getProperties(): AcsPropIfz[] {
@@ -32,39 +32,94 @@ export class User implements UserIfz {
      * @returns void
      * @memberof User
      */
-    access(schema:Schema):boolean {
-        let isAllowed, isOnDate, hasAccesses:boolean =  true;
+    access(): boolean {
+        let isAllowed: boolean =  true;
+        let initDate: boolean = true; 
+        let endDate: boolean = true; 
+        let hasAccesses: boolean = true;
 
-        isAllowed = this.isAllowed(schema);
-        isOnDate = this.isOnDate(schema);
-        hasAccesses = this.hasAccesses(schema);
+        isAllowed = this.isAllowed();
+        initDate = this.isOnDateInit();
+        endDate = this.isOnDateEnd();
+        hasAccesses = this.hasAccesses();
 
-        return isAllowed && isOnDate && hasAccesses;
+        return isAllowed && initDate && endDate && hasAccesses;
     }
 
     /*
     * check ALLOWED acs prop
     */
-    isAllowed(schema:Schema):boolean {
-        schema.getProperties().forEach(acsProp => {
+    isAllowed(): boolean {
+        let flag:  boolean = false;
+        let found: boolean = false;
+
+        this.properties.forEach(p => {
+            if (p.type === ACS_PROP_TYPE.ALLOWED) {
+                found = true;
+                if(p.getPropValue()){
+                    flag = true;
+                }
+            }
         });
-        return true;
+
+        return flag == found;
     }
 
     /**
      * check init and end date of user. In case of a temporal user
      * @returns 
      */
-    isOnDate(schema:Schema):boolean {
-        return true;
+    isOnDateInit(): boolean {
+        let flag:  boolean = false;
+        let found: boolean = false;
+
+        this.properties.forEach(p => {
+            if (p.type === ACS_PROP_TYPE.INIT_DATE ) {
+                found = true;
+                if(p.getPropValue() >= new Date().getTime()){
+                    flag = true;
+                }
+            }
+        });
+
+        return flag == found;
     }
+
+    isOnDateEnd(): boolean {
+        let flag:  boolean = false;
+        let found: boolean = false;
+
+        this.properties.forEach(p => {
+            if (p.type === ACS_PROP_TYPE.END_DATE ) {
+                found = true;
+                if(p.getPropValue() <= new Date().getTime()){
+                    flag = true;
+                }
+            }
+        });
+
+        return flag == found;
+    }
+
 
     /**
      * check if there are enough acceses in the acs prop
      * @returns 
      */
-    hasAccesses(schema:Schema):boolean {
-        return true;
+    hasAccesses(): boolean {
+        let flag:  boolean = false;
+        let found: boolean = false;
+
+        this.properties.forEach(p => {
+            if (p.type === ACS_PROP_TYPE.NUMBER_ACCESSES) {
+                found = true;
+                if(p.getPropValue() > 0){
+                    flag = true;
+                }
+            }
+        });
+
+        return flag == found;
     }
 
 
