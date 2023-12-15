@@ -1,22 +1,46 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { UserDetailsComponent } from './components/user-details/user-details.component';
-import { UsersViewComponent } from './components/users-view/users-view.component';
-import { SchemaComponent } from './components/schema/schema.component';
-import {CreateUserComponent} from './components/create-user/create-user.component';
-import { AccessControlViewComponent } from './components/access-control-view/access-control-view.component';
+import { RouterModule, Routes } from '@angular/router';
+import { BlankComponent } from './layouts/blank/blank.component';
+import { FullComponent } from './layouts/full/full.component';
 
 const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: '/welcome' },
-  { path: 'users-view', component : UsersViewComponent },
-  { path: 'create-user', component : CreateUserComponent },
-  { path: 'schema', component : SchemaComponent },
-  { path: 'detail/:id', component : UserDetailsComponent },
-  { path: 'acs', component : AccessControlViewComponent }
+  {
+    path: '',
+    component: FullComponent,
+    children: [
+      {
+        path: '',
+        redirectTo: '/starter',
+        pathMatch: 'full',
+      },
+      {
+        path: 'starter',
+        loadChildren: () =>
+          import('./pages/pages.module').then((m) => m.PagesModule),
+      },
+    ],
+  },
+  {
+    path: '',
+    component: BlankComponent,
+    children: [
+      {
+        path: 'authentication',
+        loadChildren: () =>
+          import('./pages/authentication/authentication.module').then(
+            (m) => m.AuthenticationModule
+          ),
+      },
+    ],
+  },
+  {
+    path: '**',
+    redirectTo: 'authentication/error',
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
